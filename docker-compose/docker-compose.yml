@@ -1,0 +1,51 @@
+---
+version: '3'
+
+services:
+  mysql-master:
+    image: mysql:5.7.25
+    networks:
+      - mysql-repl-network
+    volumes:
+      - 'mysql_data_volume:/bitnami/mysql/data'
+    environment:
+      MYSQL_ROOT_PASSWORD: my_root_password
+    volumes:
+      - mysql-master-data:/var/lib/mysql/
+      - ./mysql-master:/etc/mysql/conf.d/      
+  mysql-slave:
+    image: mysql:5.7.25
+    networks:
+      - mysql-repl-network
+    depends_on:
+      - mysql-master
+    environment:
+      MYSQL_ROOT_PASSWORD: my_root_password
+    volumes:
+      - mysql-slave-data:/var/lib/mysql/
+      - ./mysql-slave:/etc/mysql/conf.d/
+  mysql-connector:
+    image: mysql:5.7.25
+    networks:
+      - mysql-repl-network
+    depends_on:
+      - mysql-master
+      - mysql-slave
+    environment:
+      MYSQL_SLAVE_HOST: mysql-master
+      MYSQL_MASTER_HOST: mysql-slave
+      MYSQL_SLAVE_PASSWORD: my_root_password
+      MYSQL_MASTER_PASSWORD: my_root_password
+      MYSQL_ROOT_PASSWORD: my_root_password
+      MYSQL_REPLICATION_USER: repl
+      MYSQL_REPLICATION_PASSWORD: repl
+    volumes:
+      - ./mysql-connector.sh:/tmp/mysql-connector.sh
+    command: /bin/bash -x /tmp/mysql-connector.sh
+
+volumes:
+  mysql-master-data:
+  mysql-slave-data:
+
+networks:
+  mysql-repl-network:

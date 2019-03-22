@@ -1,0 +1,14 @@
+---
+
+- hosts: target
+  remote_user: root
+
+  tasks:
+  - name: copy docker
+    copy: src=../docker/ dest=/opt/mysql-in-kubernetes/docker backup=true
+
+  - name: copy docker compose
+    copy: src=../docker-compose/ dest=/opt/mysql-in-kubernetes/docker-compose backup=true    
+
+  - name: copy kubernetes
+    copy: src=../kubernetes/ dest=/opt/mysql-in-kubernetes/kubernetes backup=true
