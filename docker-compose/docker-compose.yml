@@ -6,8 +6,6 @@ services:
     image: mysql:5.7.25
     networks:
       - mysql-repl-network
-    volumes:
-      - 'mysql_data_volume:/bitnami/mysql/data'
     environment:
       MYSQL_ROOT_PASSWORD: my_root_password
     volumes:
